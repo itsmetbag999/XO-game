@@ -6,8 +6,8 @@
   },
   "miniapp": {
     "version": "1",
-    "name": "Farcaster Game",
-    "iconUrl": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTsNqMt1Hzk3sVts5vdds1J9bCThaDCDwJiIdHRtx_d7qBxqULuk9maEamO-c4_p3BYvb4m3fKJRCOJsuLXq3p4AdARlbzZba8luotMopH6",
+    "name": "XO Game",
+    "iconUrl": "https://play-lh.googleusercontent.com/KZTO1L6r8CzWlg2InJoU_ndRAuvYiaS-35MyYdDPeeVCPNVfM9SBY2qRGjvvADmDIR8=w240-h480-rw",
     "homeUrl": "https://xo-game-amber.vercel.app/",
     "imageUrl": "https://raw.githubusercontent.com/enchanted-assets/public/main/images/tetris-cover.png",
     "buttonTitle": "Play Now",
