@@ -6,13 +6,13 @@
   },
   "miniapp": {
     "version": "1",
-    "name": "Farcaster Game",
+    "name": "XO Game",
     "iconUrl": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTsNqMt1Hzk3sVts5vdds1J9bCThaDCDwJiIdHRtx_d7qBxqULuk9maEamO-c4_p3BYvb4m3fKJRCOJsuLXq3p4AdARlbzZba8luotMopH6",
-    "homeUrl": "xo-game-amber.vercel.app",
+    "homeUrl": "https://xo-game-amber.vercel.app/",
     "imageUrl": "https://raw.githubusercontent.com/enchanted-assets/public/main/images/tetris-cover.png",
-    "buttonTitle": "Play Now",
+    "buttonTitle": "Play XO",
     "splashImageUrl": "https://raw.githubusercontent.com/enchanted-assets/public/main/images/tetris-splash.png",
     "splashBackgroundColor": "#000000",
-    "description": "Play a fun web game directly in Farcaster!"
+    "description": "Challenge friends in a classic XO (Tic Tac Toe) game directly on Farcaster!"
   }
 }
