@@ -1,18 +1,18 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjUyNzMyOSwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDI2MkZhQUEwNDVCN2MyMmE4ODMzMWMyNTg2NjgzNjNDQmY3NGQwQjQifQ",
+    "header": "eyJmaWQiOjUyNzMyOSwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDZlMkNDYTllNTJhMUM2M0ExODgyNTMzMzJGMzcxRTk1OUYzOGRjMWYifQ",
     "payload": "eyJkb21haW4iOiJ4by1nYW1lLWFtYmVyLnZlcmNlbC5hcHAifQ",
-    "signature": "p1gF5rYrxy9vXWCtC71YmhwOhAa2QcHdmmg+vqrjk0QYT1Jnvlo3ewn6EeqId5XRdK01UbZwMlCDKchkx2+/Uxw="
+    "signature": "gcguZCv8AmbdH+LcpvBwyghc2kGSVenk3sl7YEhpCLYyYUa9jtjipOmwykBU8ucaIS/0nqmX5M6COu16XcrskRs="
   },
   "miniapp": {
     "version": "1",
-    "name": "TETRIS GAME 🎮",
-    "iconUrl": "https://tetris-farcaster.vercel.app/tetris-icon.png",
-    "homeUrl": "xo-game-amber.vercel.app",
-    "imageUrl": "https://tetris-farcaster.vercel.app/tetris-cover.png",
-    "buttonTitle": "Play Tetris",
-    "splashImageUrl": "https://tetris-farcaster.vercel.app/tetris-splash.png",
-    "splashBackgroundColor": "#0b0020",
-    "description": "Play the classic Tetris inside Farcaster. Pay a small Base fee, then drop blocks to score!"
+    "name": "XO Game",
+    "iconUrl": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTsNqMt1Hzk3sVts5vdds1J9bCThaDCDwJiIdHRtx_d7qBxqULuk9maEamO-c4_p3BYvb4m3fKJRCOJsuLXq3p4AdARlbzZba8luotMopH6",
+    "homeUrl": "https://xo-game-amber.vercel.app/",
+    "imageUrl": "https://raw.githubusercontent.com/enchanted-assets/public/main/images/tetris-cover.png",
+    "buttonTitle": "Play XO",
+    "splashImageUrl": "https://raw.githubusercontent.com/enchanted-assets/public/main/images/tetris-splash.png",
+    "splashBackgroundColor": "#000000",
+    "description": "Challenge friends in a classic XO (Tic Tac Toe) game directly on Farcaster!"
   }
 }
