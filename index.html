@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <title>❌⭕ XO Pro — Farcaster Mini App</title>
 <style>
   :root { color-scheme: dark; }
@@ -11,11 +11,8 @@
     background: linear-gradient(135deg, #0a0e13 0%, #1a1f2e 100%);
     color: #e7ecf0;
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100dvh;
-    padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100dvh; padding: 20px;
   }
   .wrap { width: min(900px, 96vw); position: relative; }
   .card { background: #12171b; border: 1px solid #1f2a32; border-radius: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
@@ -35,19 +32,9 @@
   #status{ margin-top:15px; font-size:13px; line-height:1.5; background:#0f151a; border:1px solid #1f2a32; border-radius:10px; padding:12px; }
   #status b{ color:#cde7d8; } #status .ok{ color:#4ade80; } #status .warn{ color:#fbbf24; } #status .err{ color:#f87171; } #status a{ color:#86c6ff; text-decoration:none; }
 
-  /* Classic XO styles blended in */
-  :root{
-    --panel:#12171b; --border:#1f2a32; --bg2:#0b0e1a; --x:#60a5fa; --o:#f472b6;
-  }
-  .xo-intro h1{ font-size:22px; margin:0 0 6px; font-weight:800; }
-  .row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
-  .intro-btn-accent{ background:#facc15; color:#111; border:none; border-radius:10px; padding:10px 14px; font-weight:800; cursor:pointer; }
-  .intro-btn-ghost{ background:transparent; color:#e7ecf0; border:2px solid var(--border); border-radius:10px; padding:10px 14px; font-weight:800; cursor:pointer; }
-  .hud { display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; margin-top:10px; }
-  .badge { background: var(--panel); border: 2px solid var(--border); padding: 8px 12px; border-radius: 12px; font-weight: 800; }
-  .badge .x { color: var(--x); }
-  .badge .o { color: var(--o); }
-
+  /* HUD + Board */
+  .hud { display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin: 10px 0 16px; }
+  .chip { background:#0f1418; border:1px solid #1f2a32; border-radius:10px; padding:8px 12px; font-weight:800; font-size:13px; }
   .grid { display:grid; grid-template-columns: repeat(3, 110px); gap:10px; justify-content:center; }
   .cell { position:relative; width:110px; height:110px; display:grid; place-items:center; font-size:64px; font-weight:900; background:#0d1117; border:3px solid #1f2937; border-radius:14px; cursor:pointer; transition:transform .12s, filter .12s; }
   .cell:hover{ transform:translateY(-1px); filter:brightness(1.06); }
@@ -66,37 +53,42 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- Intro Overlay (Pay-gated) -->
+    <!-- Pay Overlay -->
     <div id="intro-overlay" class="overlay">
       <div class="card" role="dialog" aria-modal="true">
         <h1>❌⭕ Play XO Pro</h1>
         <p class="muted">A small Base transfer is required to start playing (mobile & desktop supported).</p>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-          <div class="muted" style="font-size:12px;">Change recipient/amount in code if needed.</div>
+          <div class="muted" style="font-size:12px;">Edit recipient/amount in code if needed.</div>
           <button id="play" class="btn-primary">💰 Pay & Play</button>
         </div>
         <div id="status" class="hidden"></div>
       </div>
     </div>
 
-    <!-- Classic Intro Card (shows after payment) -->
-    <div class="card xo-intro" id="intro">
-      <h1>❌⭕ Play Tic‑Tac‑Toe</h1>
+    <!-- Intro (classic) -->
+    <div class="card" id="intro" style="margin-bottom:14px;">
+      <h1 style="font-size:22px;font-weight:800;margin:0 0 6px;">❌⭕ Play Tic-Tac-Toe</h1>
       <p class="muted">Challenge a friend locally or face an <strong>unbeatable</strong> CPU (minimax). First to 3 rounds wins!</p>
-      <div class="row">
-        <button id="playCpu" type="button" class="intro-btn-accent" disabled>Play vs CPU</button>
-        <button id="play2p" type="button" class="intro-btn-ghost" disabled>2 Players</button>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button id="playCpu" type="button" class="btn-primary" disabled>Play vs CPU</button>
+        <button id="play2p" type="button" class="btn-secondary" disabled>2 Players</button>
       </div>
     </div>
 
-    <!-- Game Card (classic HUD + pro shell) -->
-    <div class="card" style="margin-top:14px;">
+    <!-- Game Card -->
+    <div class="card">
       <div class="hud">
-        <div class="badge">Turn: <span id="turnBadge" class="x">X</span></div>
-        <div class="badge">Score X: <span id="scoreX">0</span></div>
-        <div class="badge">Score O: <span id="scoreO">0</span></div>
-        <div class="badge">Mode: <span id="mode">CPU</span></div>
-        <div class="badge">Paid: <span id="paid">No</span></div>
+        <div class="chip">Turn: <span id="turnBadge">X</span></div>
+        <div class="chip">Score X: <span id="scoreX">0</span></div>
+        <div class="chip">Score O: <span id="scoreO">0</span></div>
+        <div class="chip">Mode:
+          <select id="mode" style="background:#0c1116;color:#e7ecf0;border:1px solid #1f2a32;border-radius:8px;padding:6px 8px;font-weight:800">
+            <option value="cpu" selected>CPU</option>
+            <option value="2p">2P</option>
+          </select>
+        </div>
+        <div class="chip">Paid: <span id="paid">No</span></div>
       </div>
 
       <div class="grid" id="board" role="grid" aria-label="XO board"></div>
@@ -106,7 +98,7 @@
         <button id="resetMatch" class="btn-secondary btn-reset">Reset Match</button>
       </div>
 
-      <p class="muted" id="tip" style="margin-top:12px">X always starts. First to 3 round wins takes the match.</p>
+      <p class="muted" style="margin-top:12px">X always starts. First to 3 round wins takes the match.</p>
     </div>
 
     <button id="play-again" class="hidden">💰 Pay & Play Again</button>
@@ -116,10 +108,10 @@
 import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
 sdk.actions.ready();
 
-/* ===== CONFIG ===== */
-const USE_BASE_SEPOLIA = false; // set true for testnet
-const RECIPIENT = "0x49d31B3dDEd689c0FD3168307Cb1f69F5c680f06"; // change me
-const AMOUNT_ETH = "0.00001"; // change me
+/* ===== CONFIG — set these ===== */
+const USE_BASE_SEPOLIA = false; // true = testnet
+const RECIPIENT = "0x49d31B3dDEd689c0FD3168307Cb1f69F5c680f06"; // <- your address
+const AMOUNT_ETH = "0.00001"; // <- your fee
 
 const BASE_MAINNET = { chainId: "0x2105", explorer: "https://basescan.org/tx/" };
 const BASE_SEPOLIA = { chainId: "0x14a34", explorer: "https://sepolia.basescan.org/tx/" };
@@ -129,17 +121,17 @@ const TARGET = USE_BASE_SEPOLIA ? BASE_SEPOLIA : BASE_MAINNET;
 const statusEl = document.getElementById('status');
 const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
+
 const paidEl = document.getElementById('paid');
 const intro = document.getElementById('intro');
 const playCpuBtn = document.getElementById('playCpu');
 const play2pBtn = document.getElementById('play2p');
 
-// Game DOM
 const boardEl = document.getElementById('board');
+const modeSel = document.getElementById('mode');
 const turnBadge = document.getElementById('turnBadge');
 const scoreXEl = document.getElementById('scoreX');
 const scoreOEl = document.getElementById('scoreO');
-const modeEl = document.getElementById('mode');
 const resetRoundBtn = document.getElementById('resetRound');
 const resetMatchBtn = document.getElementById('resetMatch');
 
@@ -148,15 +140,52 @@ const addLine = html => { showStatus(); statusEl.insertAdjacentHTML('beforeend',
 const clearStatus = () => statusEl.innerHTML = '';
 const disable = (el, yes=true) => { if (el) el.disabled = yes; };
 
-/* ===== Wallet Helpers (same flow as your example) ===== */
+/* ===== Wallet Helpers ===== */
 function parseEther(x){ const [w,f=""] = String(x).split('.'); const frac=(f+'0'.repeat(18)).slice(0,18); return '0x'+(BigInt(w)*10n**18n + BigInt(frac)).toString(16); }
 async function getProvider(){ try{ const p = await sdk.wallet.getEthereumProvider(); if (p) return p; }catch{} return window.ethereum??null; }
-async function ensureChain(provider, chainId){ const current=(await provider.request({method:'eth_chainId'}))?.toLowerCase(); if(current===chainId.toLowerCase()) return; try{ await provider.request({method:'wallet_switchEthereumChain', params:[{chainId}]}); }catch(e){ if(e?.code===4902){ await provider.request({method:'wallet_addEthereumChain', params:[{chainId}]}); await provider.request({method:'wallet_switchEthereumChain', params:[{chainId}]}); } else { throw e; } } }
-async function requiredPayment(){ clearStatus(); addLine(`<b>Step 1:</b> Locating wallet provider…`); const provider=await getProvider(); if(!provider){ addLine(`<span class="err">No wallet available.</span> Open in Farcaster or enable a wallet.`); throw new Error('NO_PROVIDER'); } addLine(`<span class="ok">Provider ready.</span>`); addLine(`<b>Step 2:</b> Requesting accounts…`); const [from] = await provider.request({ method:'eth_requestAccounts' }); addLine(`<span class="ok">Account: ${from.slice(0,6)}…${from.slice(-4)}</span>`); addLine(`<b>Step 3:</b> Switching to Base${USE_BASE_SEPOLIA?' Sepolia':''}…`); await ensureChain(provider, TARGET.chainId); addLine(`<span class="ok">On Base${USE_BASE_SEPOLIA?' Sepolia':''}.</span>`); addLine(`<b>Step 4:</b> Sending ${AMOUNT_ETH} ETH to ${RECIPIENT.slice(0,6)}…${RECIPIENT.slice(-4)}…`); const hash = await provider.request({ method:'eth_sendTransaction', params:[{ from, to: RECIPIENT, value: parseEther(AMOUNT_ETH) }]}); addLine(`<span class="ok">TX sent.</span> <a target="_blank" rel="noopener" href="${TARGET.explorer}${hash}">View on Basescan</a>`); return hash; }
-async function payThen(action, triggerBtn){ try{ disable(triggerBtn,true); await requiredPayment(); await action(); } catch(e){ console.warn('Payment gate blocked action:', e); addLine(`<span class="warn">Payment required. Please try again.</span>`);} finally{ disable(triggerBtn,false);} }
+async function ensureChain(provider, chainId){
+  const current=(await provider.request({method:'eth_chainId'}))?.toLowerCase();
+  if(current===chainId.toLowerCase()) return;
+  try{ await provider.request({method:'wallet_switchEthereumChain', params:[{chainId}]}); }
+  catch(e){
+    if(e?.code===4902){
+      await provider.request({method:'wallet_addEthereumChain', params:[{chainId}]});
+      await provider.request({method:'wallet_switchEthereumChain', params:[{chainId}]});
+    } else { throw e; }
+  }
+}
+async function requiredPayment(){
+  clearStatus();
+  addLine(`<b>Step 1:</b> Locating wallet provider…`);
+  const provider=await getProvider();
+  if(!provider){ addLine(`<span class="err">No wallet available.</span> Open in Farcaster or enable a wallet.`); throw new Error('NO_PROVIDER'); }
+  addLine(`<span class="ok">Provider ready.</span>`);
+  addLine(`<b>Step 2:</b> Requesting accounts…`);
+  const [from] = await provider.request({ method:'eth_requestAccounts' });
+  addLine(`<span class="ok">Account: ${from.slice(0,6)}…${from.slice(-4)}</span>`);
+  addLine(`<b>Step 3:</b> Switching to Base${USE_BASE_SEPOLIA?' Sepolia':''}…`);
+  await ensureChain(provider, TARGET.chainId);
+  addLine(`<span class="ok">On Base${USE_BASE_SEPOLIA?' Sepolia':''}.</span>`);
+  addLine(`<b>Step 4:</b> Sending ${AMOUNT_ETH} ETH to ${RECIPIENT.slice(0,6)}…${RECIPIENT.slice(-4)}…`);
+  const hash = await provider.request({
+    method:'eth_sendTransaction',
+    params:[{ from, to: RECIPIENT, value: parseEther(AMOUNT_ETH) }]
+  });
+  addLine(`<span class="ok">TX sent.</span> <a target="_blank" rel="noopener" href="${TARGET.explorer}${hash}">View on Basescan</a>`);
+  return hash;
+}
+async function payThen(action, triggerBtn){
+  try{ disable(triggerBtn,true); await requiredPayment(); await action(); }
+  catch(e){ console.warn('Payment gate blocked action:', e); addLine(`<span class="warn">Payment required. Please try again.</span>`); }
+  finally{ disable(triggerBtn,false); }
+}
 
-/* ===== Classic XO Game State/Logic (unchanged feel) ===== */
-const WIN_LINES = [ [0,1,2],[3,4,5],[6,7,8], [0,3,6],[1,4,7],[2,5,8], [0,4,8],[2,4,6] ];
+/* ===== XO Game (classic feel) ===== */
+const WIN_LINES = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
 let cells = [];
 let board = Array(9).fill('');
 let turn = 'X';
@@ -165,17 +194,17 @@ let vsCpu = true;
 let roundOver = false;
 let paid = false;
 
-function updatePaid(v){ paid = v; paidEl.textContent = v ? 'Yes' : 'No'; if (v){ playCpuBtn.disabled=false; play2pBtn.disabled=false; } }
+function updatePaid(v){
+  paid = v; paidEl.textContent = v ? 'Yes' : 'No';
+  if (v){ playCpuBtn.disabled = false; play2pBtn.disabled = false; }
+}
 
 function initBoard(){
-  boardEl.innerHTML='';
-  cells=[];
+  boardEl.innerHTML = '';
+  cells = [];
   for (let i=0;i<9;i++){
     const btn=document.createElement('button');
-    btn.className='cell';
-    btn.setAttribute('role','gridcell');
-    btn.setAttribute('aria-label',`Cell ${i+1}`);
-    btn.dataset.index=i;
+    btn.className='cell'; btn.dataset.index=i; btn.setAttribute('role','gridcell');
     const mark=document.createElement('span'); mark.className='mark'; btn.appendChild(mark);
     const winLine=document.createElement('span'); winLine.className='win-line'; btn.appendChild(winLine);
     btn.addEventListener('click', onCellClick);
@@ -197,90 +226,124 @@ function makeMove(idx, player){
   board[idx]=player;
   const mark=cells[idx].querySelector('.mark');
   mark.textContent=player; mark.className=`mark ${player.toLowerCase()}`;
-  cells[idx].classList.add('disabled');
-  const result=getResult(board);
-  if (result.winner){ endRound(result.winner, result.line); }
-  else if (result.draw){ endRound(null, []); }
-  else { turn = player==='X' ? 'O' : 'X'; updateHUD(); }
+  cells[idx].disabled = true;
+  const res = getResult(board);
+  if (res.winner){ endRound(res.winner, res.line); }
+  else if (res.draw){ endRound(null, []); }
+  else { turn = (player==='X' ? 'O' : 'X'); updateHUD(); }
 }
 
-function updateHUD(text){
-  turnBadge.textContent=turn; turnBadge.className = (turn==='X' ? 'x' : 'o');
-  scoreXEl.textContent=String(scores.X); scoreOEl.textContent=String(scores.O);
-  modeEl.textContent = vsCpu ? 'CPU' : '2P';
+function updateHUD(){
+  turnBadge.textContent = turn;
+  scoreXEl.textContent = String(scores.X);
+  scoreOEl.textContent = String(scores.O);
+  // mode text mirrors select
 }
 
-function endRound(winner,line){
-  roundOver=true;
-  if (winner){ scores[winner]++; line.forEach(i=>cells[i].classList.add('win')); }
-  scoreXEl.textContent=String(scores.X); scoreOEl.textContent=String(scores.O);
-  if (scores.X===3 || scores.O===3){
-    setTimeout(()=>{ endMatch(); }, 50);
+function endRound(winner, line){
+  roundOver = true;
+  if (winner){
+    scores[winner]++;
+    line.forEach(i => cells[i].classList.add('win'));
   }
+  scoreXEl.textContent = String(scores.X);
+  scoreOEl.textContent = String(scores.O);
+
+  setTimeout(()=>{
+    if (scores.X===3 || scores.O===3){
+      endMatch();
+    } else {
+      resetRound();
+    }
+  }, 180);
 }
 
 function resetRound(){
   board = Array(9).fill(''); turn='X'; roundOver=false;
-  cells.forEach(c=>{ c.classList.remove('disabled','win'); const m=c.querySelector('.mark'); m.textContent=''; m.className='mark'; });
-  updateHUD('New round. X to move.');
-  if (vsCpu && turn==='O') cpuMove();
+  cells.forEach(c=>{
+    c.classList.remove('win'); c.disabled=false;
+    const m=c.querySelector('.mark'); m.textContent=''; m.className='mark';
+  });
+  updateHUD();
 }
 
 function resetMatch(){ scores={X:0,O:0}; resetRound(); }
 
 function getResult(b){
-  for (const line of WIN_LINES){ const [a,b2,c]=line; if (b[a] && b[a]===b[b2] && b[a]===b[c]) return { winner:b[a], line }; }
+  for (const L of WIN_LINES){
+    const [a,bb,c] = L;
+    if (b[a] && b[a]===b[bb] && b[a]===b[c]) return { winner:b[a], line:L };
+  }
   if (b.every(v=>v)) return { draw:true, line:[] };
   return { winner:null, draw:false, line:[] };
 }
 
-function emptyIndices(b){ return b.map((v,i)=>v?null:i).filter(v=>v!==null); }
+function emptyIdx(b){ return b.map((v,i)=>v?null:i).filter(v=>v!==null); }
 function minimax(b, player){
-  const res=getResult(b);
-  if (res.winner==='X') return { score:-10 };
-  if (res.winner==='O') return { score:10 };
-  if (res.draw) return { score:0 };
+  const r=getResult(b);
+  if (r.winner==='X') return { score:-10 };
+  if (r.winner==='O') return { score:10 };
+  if (r.draw) return { score:0 };
   const moves=[];
-  for (const i of emptyIndices(b)){
-    const nb=b.slice(); nb[i]=player; const next=player==='O'?'X':'O';
-    const { score } = minimax(nb,next); moves.push({ index:i, score });
+  for (const i of emptyIdx(b)){
+    const nb=b.slice(); nb[i]=player;
+    const next = player==='O' ? 'X' : 'O';
+    const { score } = minimax(nb, next);
+    moves.push({ index:i, score });
   }
-  if (player==='O'){ let best=-Infinity,bm=moves[0]; for (const m of moves) if (m.score>best){ best=m.score; bm=m; } return bm; }
-  else { let best=Infinity,bm=moves[0]; for (const m of moves) if (m.score<best){ best=m.score; bm=m; } return bm; }
+  if (player==='O'){ let best=-Infinity, bm=moves[0]; for (const m of moves) if (m.score>best){ best=m.score; bm=m; } return bm; }
+  else { let best=Infinity, bm=moves[0]; for (const m of moves) if (m.score<best){ best=m.score; bm=m; } return bm; }
 }
-function cpuMove(){ if (board.every(v=>!v) && board[4]===''){ return makeMove(4,'O'); } const move=minimax(board.slice(),'O'); makeMove(move.index,'O'); }
+function cpuMove(){
+  if (board.every(v=>!v) && board[4]===''){ makeMove(4,'O'); return; }
+  const m = minimax(board.slice(),'O'); makeMove(m.index,'O');
+}
 
 /* ===== Start & Replay (Pay-Gated) ===== */
-playBtn.addEventListener('click',(e)=>{
+playBtn.addEventListener('click', (e)=>{
   e.preventDefault();
   payThen(()=>{
     document.getElementById('intro-overlay').classList.add('hidden');
     updatePaid(true);
-    // Now user can choose CPU/2P. Do not auto-start; preserve classic flow.
   }, playBtn);
 });
 
-playCpuBtn.addEventListener('click',()=>{ if(!paid) return; vsCpu=true; scores={X:0,O:0}; initBoard(); resetRound(); });
-play2pBtn.addEventListener('click',()=>{ if(!paid) return; vsCpu=false; scores={X:0,O:0}; initBoard(); resetRound(); });
+playCpuBtn.addEventListener('click', ()=>{
+  if (!paid) return;
+  vsCpu = true;
+  initBoard(); resetMatch();
+  modeSel.value = 'cpu';
+});
+play2pBtn.addEventListener('click', ()=>{
+  if (!paid) return;
+  vsCpu = false;
+  initBoard(); resetMatch();
+  modeSel.value = '2p';
+});
+modeSel.addEventListener('change', ()=>{
+  vsCpu = (modeSel.value === 'cpu');
+  resetRound();
+});
 
 function endMatch(){
   const winner = scores.X===3 ? 'X' : 'O';
-  const msg=document.createElement('div');
-  msg.textContent=`Match over! Winner: ${winner}`;
-  msg.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:42px;font-weight:900;color:#fbbf24;text-shadow:0 0 30px #fbbf24;pointer-events:none;z-index:1000;';
+  const msg = document.createElement('div');
+  msg.textContent = `Match over! Winner: ${winner}`;
+  msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:42px;font-weight:900;color:#fbbf24;text-shadow:0 0 30px #fbbf24;pointer-events:none;z-index:1000;';
   document.body.appendChild(msg); setTimeout(()=>msg.remove(),1500);
-  // Pay-gated replay (optional)
-  const againBtn = document.getElementById('play-again');
-  againBntSafeOff();
-  againBtn.classList.remove('hidden');
-  againBtn.onclick = (ev)=>{ ev.preventDefault(); payThen(()=>{ againBtn.classList.add('hidden'); resetMatch(); }, againBtn); };
+
+  // optional: pay to play again
+  playAgainBtn.classList.remove('hidden');
+  playAgainBtn.onclick = (ev)=>{
+    ev.preventDefault();
+    payThen(()=>{
+      playAgainBtn.classList.add('hidden');
+      resetMatch();
+    }, playAgainBtn);
+  };
 }
-function againBntSafeOff(){ const b=document.getElementById('play-again'); b.classList.add('hidden'); b.onclick=null; }
 
-resetRoundBtn.addEventListener('click', resetRound);
-resetMatchBtn.addEventListener('click', resetMatch);
-
-// Safety logs
+/* ===== Safety logs ===== */
 window.addEventListener('error', e=>console.error('Error:', e.error||e));
 window.addEventListener('unhandledrejection', e=>console.error('Unhandled promise:', e.reason));
 </script>
