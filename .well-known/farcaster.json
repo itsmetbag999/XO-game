@@ -1,9 +1,10 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjUzNDM3NCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweEExNEZBZjRFRTIwZTg0MTQ2QTkwMzMwMTk3MTQyNzI1Mzk5NTVERjMifQ",
-    "payload": "eyJkb21haW4iOiJmYXJjYXN0ZXItZ2FtZS10d28udmVyY2VsLmFwcCJ9",
-    "signature": "8NaAYOUpm2gtzgVyVpt43TiFlHpBi0uF6jKJdfCAWFoiEyDTtJ7njorsexgod03+mfrheE7rvV2jWLnmmGI42hw="
-  },
+    "header": "eyJmaWQiOjUyNzMyOSwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDI2MkZhQUEwNDVCN2MyMmE4ODMzMWMyNTg2NjgzNjNDQmY3NGQwQjQifQ",
+    "payload": "eyJkb21haW4iOiJ4by1nYW1lLWFtYmVyLnZlcmNlbC5hcHAifQ",
+    "signature": "MHgxMGY4OTkyMGZjOTI1ZmNiYzgxN2E4ZTllOTRmZjQ5OGRkNzdkMGM3MTcxYmJlNDA4ZjVhZGQyMTYwMGUxYzFlM2JkY2Q3Njk3ZDE5NGMwM2U5ZjgyNTQ2NDg2NTNjMGNjODE0M2IyYjk5ZjFkNWNiNDJhNDY2ODEwN2NjOGFiNjFi"
+  }
+}
   "miniapp": {
     "version": "1",
     "name": "Farcaster Game",
