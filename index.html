@@ -35,6 +35,7 @@
   /* HUD + Board */
   .hud { display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin: 10px 0 16px; }
   .chip { background:#0f1418; border:1px solid #1f2a32; border-radius:10px; padding:8px 12px; font-weight:800; font-size:13px; }
+  .timer-chip { background:#1a0f0f; border:2px solid #f59e0b; }
   .grid { display:grid; grid-template-columns: repeat(3, 110px); gap:10px; justify-content:center; }
   .cell { position:relative; width:110px; height:110px; display:grid; place-items:center; font-size:64px; font-weight:900; background:#0d1117; border:3px solid #1f2937; border-radius:14px; cursor:pointer; transition:transform .12s, filter .12s; }
   .cell:hover{ transform:translateY(-1px); filter:brightness(1.06); }
@@ -47,7 +48,6 @@
   .controls { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
   .info { color:#94a3b8; font-size:13px; }
 
-  #play-again { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); padding:16px 32px; background:linear-gradient(135deg,#ff8c42,#ff6b1a); color:#fff; border:none; border-radius:12px; font-weight:900; font-size:18px; cursor:pointer; box-shadow:0 10px 40px rgba(255,107,26,.5); z-index:50; }
   @media (max-width: 720px) { .grid{ grid-template-columns:repeat(3, 90px);} .cell{ width:90px; height:90px; font-size:54px;} }
 </style>
 </head>
@@ -57,7 +57,7 @@
     <div id="intro-overlay" class="overlay">
       <div class="card" role="dialog" aria-modal="true">
         <h1>❌⭕ Play XO Pro</h1>
-        <p class="muted">A small Base transfer is required to start playing (mobile & desktop supported).</p>
+        <p class="muted">A small Base transfer is required to start playing against CPU (5-second timed rounds).</p>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
           <div class="muted" style="font-size:12px;">Edit recipient/amount in code if needed.</div>
           <button id="play" class="btn-primary">💰 Pay & Play</button>
@@ -66,42 +66,26 @@
       </div>
     </div>
 
-    <!-- Intro (classic) -->
-    <div class="card" id="intro" style="margin-bottom:14px;">
-      <h1 style="font-size:22px;font-weight:800;margin:0 0 6px;">❌⭕ Play Tic-Tac-Toe</h1>
-      <p class="muted">Challenge a friend locally or face an <strong>unbeatable</strong> CPU (minimax). First to 3 rounds wins!</p>
-      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-        <button id="playCpu" type="button" class="btn-primary" disabled>Play vs CPU</button>
-        <button id="play2p" type="button" class="btn-secondary" disabled>2 Players</button>
-      </div>
-    </div>
-
     <!-- Game Card -->
     <div class="card">
       <div class="hud">
         <div class="chip">Turn: <span id="turnBadge">X</span></div>
+        <div class="chip timer-chip">⏱️ Time: <span id="timer">5.0</span>s</div>
         <div class="chip">Score X: <span id="scoreX">0</span></div>
         <div class="chip">Score O: <span id="scoreO">0</span></div>
-        <div class="chip">Mode:
-          <select id="mode" style="background:#0c1116;color:#e7ecf0;border:1px solid #1f2a32;border-radius:8px;padding:6px 8px;font-weight:800">
-            <option value="cpu" selected>CPU</option>
-            <option value="2p">2P</option>
-          </select>
-        </div>
+        <div class="chip">Mode: CPU</div>
         <div class="chip">Paid: <span id="paid">No</span></div>
       </div>
 
       <div class="grid" id="board" role="grid" aria-label="XO board"></div>
 
       <div class="controls">
-        <button id="resetRound" class="btn-secondary">Reset Round</button>
-        <button id="resetMatch" class="btn-secondary btn-reset">Reset Match</button>
+        <button id="resetRound" class="btn-secondary">💰 Pay & Reset Round</button>
+        <button id="resetMatch" class="btn-secondary btn-reset">💰 Pay & Reset Match</button>
       </div>
 
-      <p class="muted" style="margin-top:12px">X always starts. First to 3 round wins takes the match.</p>
+      <p class="muted" style="margin-top:12px">⚡ Each round auto-ends after 5 seconds! X always starts. First to 3 round wins takes the match.</p>
     </div>
-
-    <button id="play-again" class="hidden">💰 Pay & Play Again</button>
   </div>
 
 <script type="module">
@@ -112,6 +96,7 @@ sdk.actions.ready();
 const USE_BASE_SEPOLIA = false; // true = testnet
 const RECIPIENT = "0x49d31B3dDEd689c0FD3168307Cb1f69F5c680f06"; // <- your address
 const AMOUNT_ETH = "0.00001"; // <- your fee
+const ROUND_TIME = 5; // seconds per round
 
 const BASE_MAINNET = { chainId: "0x2105", explorer: "https://basescan.org/tx/" };
 const BASE_SEPOLIA = { chainId: "0x14a34", explorer: "https://sepolia.basescan.org/tx/" };
@@ -120,16 +105,10 @@ const TARGET = USE_BASE_SEPOLIA ? BASE_SEPOLIA : BASE_MAINNET;
 /* ===== DOM ===== */
 const statusEl = document.getElementById('status');
 const playBtn = document.getElementById('play');
-const playAgainBtn = document.getElementById('play-again');
-
 const paidEl = document.getElementById('paid');
-const intro = document.getElementById('intro');
-const playCpuBtn = document.getElementById('playCpu');
-const play2pBtn = document.getElementById('play2p');
-
 const boardEl = document.getElementById('board');
-const modeSel = document.getElementById('mode');
 const turnBadge = document.getElementById('turnBadge');
+const timerEl = document.getElementById('timer');
 const scoreXEl = document.getElementById('scoreX');
 const scoreOEl = document.getElementById('scoreO');
 const resetRoundBtn = document.getElementById('resetRound');
@@ -180,7 +159,7 @@ async function payThen(action, triggerBtn){
   finally{ disable(triggerBtn,false); }
 }
 
-/* ===== XO Game (classic feel) ===== */
+/* ===== XO Game (CPU only, timed) ===== */
 const WIN_LINES = [
   [0,1,2],[3,4,5],[6,7,8],
   [0,3,6],[1,4,7],[2,5,8],
@@ -190,13 +169,14 @@ let cells = [];
 let board = Array(9).fill('');
 let turn = 'X';
 let scores = { X:0, O:0 };
-let vsCpu = true;
 let roundOver = false;
 let paid = false;
+let roundTimer = null;
+let timeLeft = ROUND_TIME;
 
 function updatePaid(v){
-  paid = v; paidEl.textContent = v ? 'Yes' : 'No';
-  if (v){ playCpuBtn.disabled = false; play2pBtn.disabled = false; }
+  paid = v; 
+  paidEl.textContent = v ? 'Yes' : 'No';
 }
 
 function initBoard(){
@@ -211,6 +191,60 @@ function initBoard(){
     boardEl.appendChild(btn); cells.push(btn);
   }
   updateHUD();
+  startRoundTimer();
+}
+
+function startRoundTimer(){
+  timeLeft = ROUND_TIME;
+  updateTimer();
+  if(roundTimer) clearInterval(roundTimer);
+  roundTimer = setInterval(()=>{
+    timeLeft -= 0.1;
+    if(timeLeft <= 0){
+      timeLeft = 0;
+      updateTimer();
+      clearInterval(roundTimer);
+      if(!roundOver) timeoutRound();
+    } else {
+      updateTimer();
+    }
+  }, 100);
+}
+
+function updateTimer(){
+  timerEl.textContent = timeLeft.toFixed(1);
+  if(timeLeft <= 2) timerEl.style.color = '#f87171';
+  else timerEl.style.color = '#e7ecf0';
+}
+
+function stopRoundTimer(){
+  if(roundTimer) clearInterval(roundTimer);
+  roundTimer = null;
+}
+
+function timeoutRound(){
+  roundOver = true;
+  stopRoundTimer();
+  // Count who has more marks
+  const xCount = board.filter(c => c === 'X').length;
+  const oCount = board.filter(c => c === 'O').length;
+  
+  let winner = null;
+  if(xCount > oCount) winner = 'X';
+  else if(oCount > xCount) winner = 'O';
+  
+  if(winner){
+    scores[winner]++;
+    updateHUD();
+  }
+  
+  setTimeout(()=>{
+    if (scores.X===3 || scores.O===3){
+      endMatch();
+    } else {
+      resetRound();
+    }
+  }, 1000);
 }
 
 function onCellClick(e){
@@ -219,7 +253,7 @@ function onCellClick(e){
   if (roundOver || board[idx]) return;
   makeMove(idx, turn);
   if (roundOver) return;
-  if (vsCpu && turn==='O') cpuMove();
+  if (turn==='O') setTimeout(()=>cpuMove(), 300);
 }
 
 function makeMove(idx, player){
@@ -237,17 +271,16 @@ function updateHUD(){
   turnBadge.textContent = turn;
   scoreXEl.textContent = String(scores.X);
   scoreOEl.textContent = String(scores.O);
-  // mode text mirrors select
 }
 
 function endRound(winner, line){
   roundOver = true;
+  stopRoundTimer();
   if (winner){
     scores[winner]++;
     line.forEach(i => cells[i].classList.add('win'));
   }
-  scoreXEl.textContent = String(scores.X);
-  scoreOEl.textContent = String(scores.O);
+  updateHUD();
 
   setTimeout(()=>{
     if (scores.X===3 || scores.O===3){
@@ -255,19 +288,25 @@ function endRound(winner, line){
     } else {
       resetRound();
     }
-  }, 180);
+  }, 1000);
 }
 
 function resetRound(){
-  board = Array(9).fill(''); turn='X'; roundOver=false;
+  board = Array(9).fill(''); 
+  turn='X'; 
+  roundOver=false;
   cells.forEach(c=>{
     c.classList.remove('win'); c.disabled=false;
     const m=c.querySelector('.mark'); m.textContent=''; m.className='mark';
   });
   updateHUD();
+  startRoundTimer();
 }
 
-function resetMatch(){ scores={X:0,O:0}; resetRound(); }
+function resetMatch(){ 
+  scores={X:0,O:0}; 
+  resetRound(); 
+}
 
 function getResult(b){
   for (const L of WIN_LINES){
@@ -295,6 +334,7 @@ function minimax(b, player){
   else { let best=Infinity, bm=moves[0]; for (const m of moves) if (m.score<best){ best=m.score; bm=m; } return bm; }
 }
 function cpuMove(){
+  if(roundOver) return;
   if (board.every(v=>!v) && board[4]===''){ makeMove(4,'O'); return; }
   const m = minimax(board.slice(),'O'); makeMove(m.index,'O');
 }
@@ -305,24 +345,25 @@ playBtn.addEventListener('click', (e)=>{
   payThen(()=>{
     document.getElementById('intro-overlay').classList.add('hidden');
     updatePaid(true);
+    initBoard();
+    resetMatch();
   }, playBtn);
 });
 
-playCpuBtn.addEventListener('click', ()=>{
+resetRoundBtn.addEventListener('click', (e)=>{
+  e.preventDefault();
   if (!paid) return;
-  vsCpu = true;
-  initBoard(); resetMatch();
-  modeSel.value = 'cpu';
+  payThen(()=>{
+    resetRound();
+  }, resetRoundBtn);
 });
-play2pBtn.addEventListener('click', ()=>{
+
+resetMatchBtn.addEventListener('click', (e)=>{
+  e.preventDefault();
   if (!paid) return;
-  vsCpu = false;
-  initBoard(); resetMatch();
-  modeSel.value = '2p';
-});
-modeSel.addEventListener('change', ()=>{
-  vsCpu = (modeSel.value === 'cpu');
-  resetRound();
+  payThen(()=>{
+    resetMatch();
+  }, resetMatchBtn);
 });
 
 function endMatch(){
@@ -330,17 +371,8 @@ function endMatch(){
   const msg = document.createElement('div');
   msg.textContent = `Match over! Winner: ${winner}`;
   msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:42px;font-weight:900;color:#fbbf24;text-shadow:0 0 30px #fbbf24;pointer-events:none;z-index:1000;';
-  document.body.appendChild(msg); setTimeout(()=>msg.remove(),1500);
-
-  // optional: pay to play again
-  playAgainBtn.classList.remove('hidden');
-  playAgainBtn.onclick = (ev)=>{
-    ev.preventDefault();
-    payThen(()=>{
-      playAgainBtn.classList.add('hidden');
-      resetMatch();
-    }, playAgainBtn);
-  };
+  document.body.appendChild(msg); 
+  setTimeout(()=>msg.remove(),2500);
 }
 
 /* ===== Safety logs ===== */
